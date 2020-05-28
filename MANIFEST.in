@@ -1,3 +1,11 @@
 include LICENSE
+include LICENSE.Apache-2.0
+include LICENSE.MIT
 include README.rst
 exclude setup.py
+
+recursive-include tests *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[cod]
+
+recursive-include docs *.rst *.jpg *.png *.gif
