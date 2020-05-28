@@ -37,7 +37,7 @@ requirements = [
     "discord-hero>=0.1.0b0",
 ]
 
-with codecs.open(os.path.join(here, '__init__.py'), encoding='utf-8') as f:
+with codecs.open(os.path.join('extensions/devtools/__init__.py'), encoding='utf-8') as f:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                         f.read(), re.MULTILINE).group(1)
 
