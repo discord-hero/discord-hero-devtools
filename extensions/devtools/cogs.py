@@ -8,6 +8,17 @@ import os
 
 from hero import checks
 from hero.conf import Extensions
+from django.core import management
+
+
+def rec_model():
+    management.call_command('makemigrations', interactive=False)
+    management.call_command('makemigrations', interactive=False, merge=True)
+    try:
+        management.call_command('migrate', interactive=False, run_syncdb=True)
+    except management.CommandError as command_error:
+        print(command_error)
+
 
 class DevTools(hero.Cog):
     core: hero.Core
@@ -40,12 +51,15 @@ class DevTools(hero.Cog):
             for ext in self.core.get_extensions():
                 self.core.load_extension(ext)
                 loaded.append(ext)
+
+            rec_model()
             for ext in loaded:
                 msg += '{}\n'.format(ext)
 
             return await ctx.send("Extensions have been successfully loaded!\n{}".format(msg))
 
         self.core.load_extension(extension)
+        rec_model()
 
         await ctx.send("Extension {} has been loaded!".format(extension))
 
@@ -62,6 +76,8 @@ class DevTools(hero.Cog):
                 self.core.unload_extension(ext)
                 self.core.load_extension(ext)
                 loaded.append(ext)
+            rec_model()
+
             for ext in loaded:
                 msg += '{}\n'.format(ext)
 
@@ -69,6 +85,7 @@ class DevTools(hero.Cog):
 
         self.core.unload_extension(extension)
         self.core.load_extension(extension)
+        rec_model()
 
         await ctx.send("Extension {} has been reloaded!".format(extension))
 
@@ -84,7 +101,13 @@ class DevTools(hero.Cog):
             for ext in self.core.get_extensions():
                 self.core.unload_extension(ext)
                 loaded.append(ext)
+            rec_model()
+
             for ext in loaded:
                 msg += '{}\n'.format(ext)
 
             return await ctx.send("Extensions have been successfully unloaded!\n{}".format(msg))
+
+        self.core.unload_extension(extension)
+        rec_model()
+        await ctx.send("Extension {} has been unloaded!".format(extension))
