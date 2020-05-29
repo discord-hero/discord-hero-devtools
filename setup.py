@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import codecs
 import os
@@ -37,7 +39,7 @@ requirements = [
     "discord-hero>=0.1.0b0",
 ]
 
-with codecs.open(os.path.join('extensions/devtools/__init__.py'), encoding='utf-8') as f:
+with codecs.open(os.path.join(here, '__init__.py'), encoding='utf-8') as f:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                         f.read(), re.MULTILINE).group(1)
 
@@ -99,8 +101,8 @@ class PublishCommand(Command):
 
 
 setup(
-    author="EraseKesu",
-    author_email='eitan.olchik@gmail.com',
+    author="monospacedmagic",
+    author_email='luci@monospacedmagic.dev',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Plugins',
@@ -129,7 +131,7 @@ setup(
     long_description_content_type='text/x-rst',
     include_package_data=True,
     keywords='discord-hero {} discord bot'.format(EXTENSION_NAME),
-    name='discord-hero-{}'.format(EXTENSION_NAME),
+    name='discord-hero_{}'.format(EXTENSION_NAME),
     packages=packages,
     package_dir=package_dir,
     python_requires=python_requirement,
