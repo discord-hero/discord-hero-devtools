@@ -52,3 +52,10 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# other
+.egg
+.egg-info
+.gz
+.dist/
+.discord_hero_devtools.egg-info/
