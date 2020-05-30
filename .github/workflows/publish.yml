@@ -20,11 +20,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install --upgrade setuptools wheel twine
 
-    - name: Build and publish
-      uses: secrethub/actions/env-export@v0.1.0
+    - uses: secrethub/actions/env-export@v0.1.0
       env:
         SECRETHUB_CREDENTIAL: ${{ secrets.SECRETHUB_CREDENTIAL }}
         TWINE_USERNAME: secrethub://monospacedmagic/main/pypi/username
         TWINE_PASSWORD: secrethub://monospacedmagic/main/pypi/password
+
+    - name: Build and publish
       run: |
         python setup.py publish
