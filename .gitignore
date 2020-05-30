@@ -5,6 +5,26 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
 # Translations
 *.mo
 *.pot
@@ -52,10 +72,3 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-
-# other
-.egg
-.egg-info
-.gz
-.dist/
-.discord_hero_devtools.egg-info/
