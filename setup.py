@@ -52,8 +52,12 @@ here = os.path.abspath(os.path.dirname(__file__))
 NAMESPACE_PREFIX = 'hero.extensions.'
 
 _, _EXTENSION_NAME = os.path.split(here)
-if EXTENSION_NAME != _EXTENSION_NAME:
-    raise ValueError("directory needs to be named {}".format(EXTENSION_NAME))
+# if this is a local extension and setup.py is not run under CI,
+# we need to point out to the user that they need to rename the
+# extension directory in order for it to work locally
+if EXTENSION_NAME != _EXTENSION_NAME and not os.getenv('CI', False):
+    raise ValueError("directory needs to be named {0} in order for the "
+                     "{0} extension to function normally".format(EXTENSION_NAME))
 
 with codecs.open(os.path.join(here, 'README.rst'), encoding='utf-8') as readme_file:
     readme = readme_file.read()
