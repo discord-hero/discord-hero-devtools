@@ -1,6 +1,6 @@
 from hero import ExtensionConfig, version
 
-__version__ = 'v0.0.2.2.1-beta'
+__version__ = '0.0.2b0'
 
 VERSION = version(__version__)
 

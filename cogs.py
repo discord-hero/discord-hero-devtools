@@ -86,7 +86,7 @@ class DevTools(hero.Cog):
         if extension is None:
             return await ctx.send("Please specify an extension to unload!")
 
-        if extenion == '*':
+        if extension == '*':
             loaded = []
             msg = ""
             for ext in self.core.get_extensions():
