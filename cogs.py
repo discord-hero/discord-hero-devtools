@@ -1,102 +1,72 @@
-import hero
+import datetime
+import os
+import time
+
 import discord
 
-import time
-import datetime
-
-import os
-
+import hero
 from hero import checks
-from hero.conf import Extensions
-from django.core import management
+
+from .controller import DevToolsController
 
 
 class DevTools(hero.Cog):
     core: hero.Core
+    ctl: DevToolsController
 
     @hero.command()
     @checks.is_owner()
-    async def devtools(self, ctx: hero.Context):
-        """Gives information about Discord Hero DevTools and the Bot that is running """
-        time_delta = round(self.core.latency*1000)
-        msg = "This is the official Discord Hero Developer Tools!\n" \
-              "You can use this to load, reload and unload extensions.\n" \
-              "This Bot has an average latency of {}".format(time_delta)
+    async def load(self, ctx: hero.Context, *extensions: str):
+        if not extensions:
+            extensions = self.core.get_extensions()
 
-        embed = discord.Embed(
-            title="Discord Hero DevTools",
-            description=msg
-            colour=0x529c43
-        )
+        failed = []
+        for extension in extensions:
+            try:
+                await self.ctl.load_extension(extension)
+            except Exception as ex:
+                failed.append(extension)
+                if hero.TEST:
+                    await self.core.report_error(ctx, ex)
+                self.ctl.print_loading_error(extension.name, ex)
 
-        await ctx.send(embed=embed)
-
-    @hero.command()
-    @checks.is_owner()
-    async def dvtls_load(self, ctx: hero.Context, extension: str = ''):
-        if extension is None:
-            return await ctx.send("Please specify an extension to load!")
-        if extension == '*':
-            loaded = []
-            msg = ""
-            for ext in self.core.get_extensions():
-                self.core.load_extension(ext)
-                loaded.append(ext)
-
-            self.core.sync_db()
-            for ext in loaded:
-                msg += '{}\n'.format(ext)
-
-            return await ctx.send("Extensions have been successfully loaded!\n{}".format(msg))
-
-        self.core.load_extension(extension)
-        self.core.sync_db()
-
-        await ctx.send("Extension {} has been loaded!".format(extension))
+        msg = "Extensions have been loaded!\n{}".format('\n'.join([f"**{ext}**" for ext in extensions if ext not in failed]))
+        if failed:
+            msg += "\nFailed:\n"
+            msg += '\n'.join([f"**{ext}**" for ext in failed])
+        await ctx.send(msg)
 
     @hero.command()
     @checks.is_owner()
-    async def dvtls_reload(self, ctx: hero.Context, extension: str = None):
-        if extension is None:
-            return await ctx.send("Please specify an extension to reload!")
+    async def reload(self, ctx: hero.Context, *extensions: hero.Extension):
+        await ctx.send(str([cmd for cmd in self.core.all_commands.copy()]))
+        if not extensions:
+            extensions = self.core.get_extensions()
 
-        if extension == '*':
-            loaded = []
-            msg = ""
-            for ext in self.core.get_extensions():
-                self.core.unload_extension(ext)
-                self.core.load_extension(ext)
-                loaded.append(ext)
-            self.core.sync_db()
+        failed = []
+        for extension in extensions:
+            try:
+                await self.ctl.reload_extension(extension)
+            except Exception as ex:
+                failed.append(extension)
+                if hero.TEST:
+                    await self.core.report_error(ctx, ex)
+                self.ctl.print_loading_error(extension.name, ex)
 
-            for ext in loaded:
-                msg += '{}\n'.format(ext)
-
-            return await ctx.send("Extensions have been successfully reloaded!\n{}".format(msg))
-
-        self.core.unload_extension(extension)
-        self.core.load_extension(extension)
-        self.core.sync_db()
-
-        await ctx.send("Extension {} has been reloaded!".format(extension))
+        msg = "Extensions have been reloaded!\n{}".format('\n'.join([f"**{ext}**" for ext in extensions if ext not in failed]))
+        if failed:
+            msg += "\nFailed:\n"
+            msg += '\n'.join([f"**{ext}**" for ext in failed])
+        await ctx.send(msg)
 
     @hero.command()
     @checks.is_owner()
-    async def dvtls_unload(self, ctx: hero.Context, extension: str = ''):
-        if extension is None:
-            return await ctx.send("Please specify an extension to unload!")
+    async def unload(self, ctx: hero.Context, *extensions: hero.Extension):
+        if not extensions:
+            extensions = self.core.get_extensions()
 
-        if extension == '*':
-            loaded = []
-            msg = ""
-            for ext in self.core.get_extensions():
-                self.core.unload_extension(ext)
-                loaded.append(ext)
+        for extension in extensions:
+            await self.ctl.unload_extension(extension)
 
-            for ext in loaded:
-                msg += '{}\n'.format(ext)
-
-            return await ctx.send("Extensions have been successfully unloaded!\n{}".format(msg))
-
-        self.core.unload_extension(extension)
-        await ctx.send("Extension {} has been unloaded!".format(extension))
+        msg = "Extensions have been unloaded!\n{}".format('\n'.join([f"**{ext}**" for ext in extensions]))
+        await ctx.send(msg)
