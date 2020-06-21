@@ -20,4 +20,4 @@ Apache-2.0 license, shall be dual licensed under the Apache
 License, Version 2.0, and the MIT license, without any
 additional terms or conditions.
 
-SPDX-License-Identifier: Apache-2.0
+SPDX-License-Identifier: Apache-2.0 OR MIT
